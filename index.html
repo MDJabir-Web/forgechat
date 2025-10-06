@@ -3,47 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ForgeChat – Private Chat</title>
+    <title>ForgeChat – Secure Messenger</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            background: linear-gradient(135deg, #232946 0%, #121629 100%);
             min-height: 100vh;
             color: #e2e8f0;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
         }
-        .chat-container {
+        /* Logo and Header */
+        .topbar {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 1.2rem 2.2rem 1.2rem 1.2rem;
+            background: rgba(36, 37, 62, 0.92);
+            box-shadow: 0 4px 24px 0 rgba(59,130,246,0.10);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: transform 0.18s;
+        }
+        .logo-btn:active {
+            transform: scale(0.96);
+        }
+        .logo-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            object-fit: cover;
+            box-shadow: 0 2px 12px rgba(59,130,246,0.13);
+            background: #fff;
+            transition: box-shadow 0.2s;
+        }
+        .topbar-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            color: #e6f0ff;
+            text-shadow: 0 2px 16px #3b82f644;
+            user-select: none;
+        }
+        /* Center Auth Section */
+        #authSection {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #232946 0%, #121629 100%);
+            animation: fadeInBg 1.2s;
+        }
+        @keyframes fadeInBg {
+            from { opacity: 0; filter: blur(8px);}
+            to { opacity: 1; filter: blur(0);}
+        }
+        #authForm {
+            background: rgba(36, 37, 62, 0.97);
+            border-radius: 28px;
+            box-shadow: 0 8px 40px 0 rgba(59,130,246,0.13), 0 1.5px 8px 0 rgba(236,72,153,0.13);
+            padding: 2.8rem 2.8rem 2.2rem 2.8rem;
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            max-width: 100%;
-            margin: 0 auto;
-            position: relative;
+            align-items: center;
+            min-width: 340px;
+            max-width: 95vw;
+            gap: 1.3rem;
+            animation: popIn 0.8s cubic-bezier(.68,-0.55,.27,1.55);
+            border: 1.5px solid #3b82f633;
         }
-        @media (min-width: 768px) {
-            .chat-container {
-                max-width: 600px;
-                margin: 0 auto;
-                padding: 0 2rem;
-            }
+        @keyframes popIn {
+            0% { transform: scale(0.85) translateY(40px); opacity: 0;}
+            100% { transform: scale(1) translateY(0); opacity: 1;}
+        }
+        #authForm input {
+            width: 100%;
+            padding: 1.05rem 1.3rem;
+            border-radius: 18px;
+            border: none;
+            background: rgba(59,130,246,0.10);
+            color: #e2e8f0;
+            font-size: 1.07rem;
+            margin-bottom: 0.2rem;
+            outline: none;
+            transition: box-shadow 0.2s, background 0.2s;
+            box-shadow: 0 1px 4px rgba(59,130,246,0.09);
+        }
+        #authForm input:focus {
+            background: rgba(59,130,246,0.18);
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+        #authForm button {
+            width: 100%;
+            padding: 1.05rem 0;
+            border-radius: 18px;
+            border: none;
+            font-weight: 700;
+            font-size: 1.09rem;
+            background: linear-gradient(90deg, #3b82f6 0%, #ec4899 100%);
+            color: #fff;
+            margin-top: 0.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(59,130,246,0.13);
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            letter-spacing: 0.04em;
+        }
+        #authForm button:hover, #authForm button:focus {
+            background: linear-gradient(90deg, #ec4899 0%, #3b82f6 100%);
+            transform: translateY(-2px) scale(1.045);
+            box-shadow: 0 4px 24px rgba(236,72,153,0.15);
+        }
+        #authForm button[type="button"] {
+            background: linear-gradient(90deg, #6366f1 0%, #3b82f6 100%);
+            margin-top: 0;
+        }
+        #authForm button[type="button"]:hover {
+            background: linear-gradient(90deg, #3b82f6 0%, #6366f1 100%);
+        }
+        #authSection h2 {
+            color: #fff;
+            font-size: 2.1rem;
+            font-weight: 800;
+            margin-bottom: 2.1rem;
+            text-align: center;
+            letter-spacing: 0.05em;
+            text-shadow: 0 2px 16px #3b82f644;
+        }
+        #authError {
+            margin-top: 0.5rem;
+            min-height: 1.2em;
+            font-size: 1.07rem;
+            text-align: center;
+            letter-spacing: 0.01em;
+            animation: shake 0.4s;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translateX(-2px);}
+            20%, 80% { transform: translateX(4px);}
+            30%, 50%, 70% { transform: translateX(-6px);}
+            40%, 60% { transform: translateX(6px);}
+        }
+        /* Main Section */
+        #mainSection {
+            animation: fadeInBg 1.2s;
         }
         .header {
-            background: rgba(30, 41, 59, 0.4);
+            background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-            padding: 1rem 1.5rem;
+            padding: 1.2rem 1.5rem;
             text-align: center;
             position: sticky;
             top: 0;
             z-index: 10;
-        }
-        .header h1 {
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-size: 1.3rem;
+            font-weight: 700;
             color: #e6f0ff;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.03em;
+            box-shadow: 0 2px 12px rgba(59,130,246,0.07);
+        }
+        #currentUser {
+            font-size: 1rem;
+            color: #a5b4fc;
+            font-weight: 600;
+            margin-right: 1.5rem;
+        }
+        #logoutBtn {
+            background: linear-gradient(90deg, #f43f5e 0%, #6366f1 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 0.5rem 1.2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 1rem;
+            transition: background 0.2s, transform 0.15s;
+        }
+        #logoutBtn:hover {
+            background: linear-gradient(90deg, #6366f1 0%, #f43f5e 100%);
+            transform: scale(1.04);
+        }
+        .chat-list {
+            max-height: 220px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            background: rgba(36, 37, 62, 0.89);
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(59,130,246,0.07);
+            padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .chat-list-item {
+            cursor: pointer;
+            padding: 0.7rem 1.2rem;
+            border-radius: 12px;
+            font-size: 1.08rem;
+            color: #e0e7ef;
+            background: transparent;
+            transition: background 0.18s, color 0.18s, transform 0.13s;
+            font-weight: 500;
+        }
+        .chat-list-item:hover, .chat-list-item.active {
+            background: linear-gradient(90deg, #3b82f6 0%, #ec4899 100%);
+            color: #fff;
+            transform: scale(1.03);
+            box-shadow: 0 2px 12px rgba(236,72,153,0.09);
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 60vh;
+            max-width: 100%;
+            margin: 0 auto;
+            position: relative;
+            background: rgba(36, 37, 62, 0.89);
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(59,130,246,0.07);
+            padding-bottom: 1.5rem;
         }
         .chat-area {
             flex: 1;
@@ -60,7 +251,7 @@
             border-radius: 3px;
         }
         .message {
-            margin-bottom: 1rem;
+            margin-bottom: 1.1rem;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -72,15 +263,17 @@
         }
         .message-bubble {
             max-width: 75%;
-            padding: 0.8rem 1.2rem;
+            padding: 0.95rem 1.3rem;
             border-radius: 18px;
             word-break: break-word;
-            font-size: 1rem;
-            line-height: 1.5;
+            font-size: 1.08rem;
+            line-height: 1.6;
             position: relative;
             background: rgba(59, 130, 246, 0.18);
-            color: #e6f0ff;
+            color: #e2e8f0;
             border: 1px solid rgba(59, 130, 246, 0.18);
+            box-shadow: 0 2px 8px rgba(59,130,246,0.07);
+            transition: background 0.2s;
         }
         .message.sent .message-bubble {
             background: linear-gradient(135deg, #3b82f6 60%, #1d4ed8 100%);
@@ -105,7 +298,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(15, 23, 42, 0.95);
+            background: rgba(15, 23, 42, 0.97);
             backdrop-filter: blur(20px);
             border-top: 1px solid rgba(59, 130, 246, 0.2);
             padding: 1rem 1.5rem;
@@ -181,106 +374,291 @@
             .input-container {
                 padding: 0.75rem 0.5rem;
             }
+            .topbar {
+                padding: 0.7rem 1rem 0.7rem 0.7rem;
+            }
+            .logo-img {
+                width: 38px;
+                height: 38px;
+            }
+            #authForm {
+                min-width: 90vw;
+                padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+            }
         }
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px);}
             to { opacity: 1; transform: translateY(0);}
         }
+        .hidden { display: none; }
+        .image-preview { max-width: 120px; max-height: 120px; margin: 0.5rem 0; border-radius: 12px; box-shadow: 0 2px 8px #3b82f655; }
     </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="header">
-            <h1>ForgeChat – Private Chat</h1>
+    <div class="topbar">
+        <button class="logo-btn" onclick="window.location.reload()">
+            <img src="https://i.ibb.co.com/nqYdPykW/Logo-maker-project-Picsart-Ai-Image-Enhancer.png" alt="ForgeChat Logo" class="logo-img">
+        </button>
+        <span class="topbar-title">ForgeChat</span>
+    </div>
+    <div id="authSection">
+        <form id="authForm">
+            <h2>Sign Up / Login</h2>
+            <input type="text" id="authUsername" placeholder="Username (A-Z, a-z, 0-9, 1 capital, 1 number)" required pattern="^(?=.*[A-Z])(?=.*\d)[A-ZaZ\d]{4,}$">
+            <input type="email" id="authEmail" placeholder="Email" required>
+            <input type="password" id="authPassword" placeholder="Password" required minlength="6">
+            <button type="submit" id="signUpBtn">Sign Up</button>
+            <button type="button" id="signInBtn">Sign In</button>
+            <div id="authError" style="color:#f87171;"></div>
+        </form>
+    </div>
+    <div id="mainSection" class="hidden">
+        <div style="margin:1.2rem 0 0.7rem 0; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span id="currentUser"></span>
+            </div>
+            <div style="position: relative;">
+                <button id="profileBtn" style="background: none; border: none; cursor: pointer; padding: 0;">
+                    <img src="https://ui-avatars.com/api/?name=U&background=6366f1&color=fff&rounded=true&size=40" id="profileIcon" alt="Profile" style="width:40px;height:40px;border-radius:50%;box-shadow:0 2px 8px #3b82f655;">
+                </button>
+                <div id="profileMenu" class="hidden" style="position: absolute; right: 0; top: 48px; background: #232946; border-radius: 12px; box-shadow: 0 4px 24px #3b82f633; min-width: 120px; z-index: 100; padding: 0.5rem 0;">
+                    <button id="logoutBtn" style="width: 100%; background: none; border: none; color: #f43f5e; font-weight: 600; font-size: 1rem; padding: 0.7rem 1rem; border-radius: 8px; cursor: pointer; text-align: left;">Logout</button>
+                </div>
+            </div>
         </div>
-        <div class="chat-area" id="chatArea"></div>
-        <div class="input-container">
-            <form class="input-wrapper" id="chatForm" autocomplete="off">
-                <input type="text" class="message-input" id="messageInput" placeholder="Type your message..." maxlength="500" autocomplete="off" autofocus>
-                <button class="send-btn" id="sendBtn" title="Send message" type="submit">➤</button>
-            </form>
+        <div style="display: flex; gap: 2rem; align-items: flex-start; justify-content: center; max-width: 900px; margin: 0 auto;">
+            <div class="chat-list" id="chatList" style="min-width: 180px; max-width: 220px; flex-shrink: 0; height: 60vh; overflow-y: auto;"></div>
+            <div class="chat-container" style="flex: 1; min-width: 0; max-width: 600px; display: flex; flex-direction: column; height: 60vh;">
+                <div class="chat-area" id="chatArea" style="flex: 1; min-height: 0;"></div>
+                <form class="input-wrapper" id="chatForm" autocomplete="off" style="margin: 0 0.5rem;">
+                    <input type="text" class="message-input" id="messageInput" placeholder="Type your message..." maxlength="500" autocomplete="off">
+                    <input type="file" id="imageInput" accept="image/*" style="display:none;">
+                    <button type="button" id="imageBtn" title="Attach image">📷</button>
+                    <button class="send-btn" id="sendBtn" title="Send message" type="submit">➤</button>
+                </form>
+                <img id="imagePreview" class="image-preview hidden">
+            </div>
         </div>
     </div>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <script>
-        // Your Firebase config
+        // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyBPZWJ3CDagXCSfoqv0XAzIrD8rfskoFiQ",
             authDomain: "couple-portfolio.firebaseapp.com",
             databaseURL: "https://couple-portfolio-default-rtdb.firebaseio.com",
             projectId: "couple-portfolio",
-            storageBucket: "couple-portfolio.firebasestorage.app",
+            storageBucket: "couple-portfolio.appspot.com",
             messagingSenderId: "1014232071173",
             appId: "1:1014232071173:web:0494ed8f53bda7be87f06c",
             measurementId: "G-9PWCH83MJY"
         };
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const db = firebase.database();
+        const storage = firebase.storage();
 
-        // --- Simple username prompt (local only) ---
-        let username = localStorage.getItem('forgechat_username');
-        if (!username) {
-            username = prompt("Enter your name or nickname:") || "Anonymous";
-            localStorage.setItem('forgechat_username', username);
+        // --- Auth Logic ---
+        const authSection = document.getElementById('authSection');
+        const mainSection = document.getElementById('mainSection');
+        const authForm = document.getElementById('authForm');
+        const signUpBtn = document.getElementById('signUpBtn');
+        const signInBtn = document.getElementById('signInBtn');
+        const authError = document.getElementById('authError');
+        const currentUser = document.getElementById('currentUser');
+        const logoutBtn = document.getElementById('logoutBtn');
+        let selectedChatUser = null;
+        let userList = {};
+
+        // Prevent default form submit
+        authForm.onsubmit = (e) => e.preventDefault();
+
+        // Sign Up
+        signUpBtn.onclick = async (e) => {
+            e.preventDefault();
+            const username = authUsername.value.trim();
+            const email = authEmail.value.trim();
+            const password = authPassword.value;
+            if (!/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{4,}$/.test(username)) {
+                authError.textContent = "Username must have 1 capital, 1 number, min 4 chars.";
+                return;
+            }
+            authError.textContent = "Signing up...";
+            try {
+                const userCred = await auth.createUserWithEmailAndPassword(email, password);
+                await db.ref('users/' + userCred.user.uid).set({ username, email });
+                authError.style.color = "#22c55e";
+                authError.textContent = "Sign up successful! Logging you in...";
+            } catch (err) {
+                authError.style.color = "#f87171";
+                authError.textContent = err.message;
+            }
+        };
+
+        // Sign In
+        signInBtn.onclick = async (e) => {
+            e.preventDefault();
+            const email = authEmail.value.trim();
+            const password = authPassword.value;
+            authError.textContent = "Signing in...";
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                authError.style.color = "#22c55e";
+                authError.textContent = "Sign in successful! Loading chats...";
+            } catch (err) {
+                authError.style.color = "#f87171";
+                authError.textContent = err.message;
+            }
+        };
+
+        // Auth State
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                authSection.classList.add('hidden');
+                mainSection.classList.remove('hidden');
+                const snap = await db.ref('users/' + user.uid).once('value');
+                currentUser.textContent = "Logged in as: " + (snap.val()?.username || user.email);
+                loadChatList();
+            } else {
+                authSection.classList.remove('hidden');
+                mainSection.classList.add('hidden');
+            }
+        });
+        logoutBtn.onclick = () => auth.signOut();
+
+        // --- Chat List ---
+        const chatList = document.getElementById('chatList');
+        async function loadChatList() {
+            chatList.innerHTML = "Loading users...";
+            const snap = await db.ref('users').once('value');
+            userList = snap.val() || {};
+            chatList.innerHTML = "";
+            Object.entries(userList).forEach(([uid, info]) => {
+                if (uid === auth.currentUser.uid) return;
+                const div = document.createElement('div');
+                div.className = 'chat-list-item';
+                div.textContent = info.username;
+                div.onclick = () => selectChat(uid, info.username);
+                chatList.appendChild(div);
+            });
+        }
+        function selectChat(uid, username) {
+            selectedChatUser = { uid, username };
+            document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
+            Array.from(chatList.children).find(el => el.textContent === username)?.classList.add('active');
+            loadMessages();
         }
 
-        // --- DOM Elements ---
+        // --- Messaging ---
         const chatArea = document.getElementById('chatArea');
-        const messageInput = document.getElementById('messageInput');
         const chatForm = document.getElementById('chatForm');
-
-        // --- Add message to chat area ---
-        function addMessage(text, sender, time, isSent) {
-            if (!text.trim()) return;
+        const messageInput = document.getElementById('messageInput');
+        let chatRef = null;
+        function getChatId(uid1, uid2) {
+            return [uid1, uid2].sort().join('_');
+        }
+        function loadMessages() {
+            chatArea.innerHTML = "";
+            if (!selectedChatUser) return;
+            if (chatRef) chatRef.off();
+            const chatId = getChatId(auth.currentUser.uid, selectedChatUser.uid);
+            chatRef = db.ref('privateChats/' + chatId);
+            chatRef.limitToLast(50).on('child_added', (snap) => {
+                const msg = snap.val();
+                addMessage(msg.text, msg.senderName, msg.time, msg.sender === auth.currentUser.uid, msg.imageUrl);
+            });
+        }
+        function addMessage(text, sender, time, isSent, imageUrl) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
             const bubbleDiv = document.createElement('div');
             bubbleDiv.className = 'message-bubble';
-            bubbleDiv.textContent = text;
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.style.maxWidth = "180px";
+                img.style.maxHeight = "180px";
+                img.style.display = "block";
+                img.style.marginBottom = "0.5em";
+                img.style.borderRadius = "12px";
+                img.style.boxShadow = "0 2px 8px #3b82f655";
+                bubbleDiv.appendChild(img);
+            }
+            if (text) bubbleDiv.appendChild(document.createTextNode(text));
             messageDiv.appendChild(bubbleDiv);
-
-            // Meta (sender and time)
             const metaDiv = document.createElement('div');
             metaDiv.className = 'message-meta';
             metaDiv.textContent = (isSent ? "You" : sender) + " • " + (time || "");
             messageDiv.appendChild(metaDiv);
-
             chatArea.appendChild(messageDiv);
-            setTimeout(() => { messageDiv.style.animationDelay = '0s'; }, 30);
             chatArea.scrollTop = chatArea.scrollHeight;
         }
 
-        // --- Listen for new messages ---
-        const messagesRef = db.ref('forgeChat/messages');
-        chatArea.innerHTML = ""; // Start blank
+        // --- Send Message & Image ---
+        const imageBtn = document.getElementById('imageBtn');
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        let imageFile = null;
 
-        messagesRef.limitToLast(50).on('child_added', (snapshot) => {
-            const msg = snapshot.val();
-            addMessage(msg.text, msg.sender, msg.time, msg.sender === username);
-        });
-
-        // --- Send message ---
-        chatForm.addEventListener('submit', function(e) {
+        imageBtn.onclick = () => imageInput.click();
+        imageInput.onchange = () => {
+            if (imageInput.files[0]) {
+                imageFile = imageInput.files[0];
+                imagePreview.src = URL.createObjectURL(imageFile);
+                imagePreview.classList.remove('hidden');
+            }
+        };
+        chatForm.onsubmit = async (e) => {
             e.preventDefault();
+            if (!selectedChatUser) return alert("Select a user to chat with!");
+            let imageUrl = null;
+            if (imageFile) {
+                const chatId = getChatId(auth.currentUser.uid, selectedChatUser.uid);
+                const storageRef = storage.ref(`chatImages/${chatId}/${Date.now()}_${imageFile.name}`);
+                await storageRef.put(imageFile);
+                imageUrl = await storageRef.getDownloadURL();
+                imageFile = null;
+                imageInput.value = "";
+                imagePreview.classList.add('hidden');
+            }
             const text = messageInput.value.trim();
-            if (text) {
-                const msg = {
-                    text,
-                    sender: username,
-                    time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-                };
-                messagesRef.push(msg);
-                messageInput.value = '';
+            if (!text && !imageUrl) return;
+            const msg = {
+                text,
+                sender: auth.currentUser.uid,
+                senderName: userList[auth.currentUser.uid]?.username || "You",
+                time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                imageUrl: imageUrl || null
+            };
+            const chatId = getChatId(auth.currentUser.uid, selectedChatUser.uid);
+            await db.ref('privateChats/' + chatId).push(msg);
+            messageInput.value = '';
+        };
+
+        // Profile icon and menu logic
+        const profileBtn = document.getElementById('profileBtn');
+        const profileMenu = document.getElementById('profileMenu');
+        const profileIcon = document.getElementById('profileIcon');
+        profileBtn.onclick = (e) => {
+            e.stopPropagation();
+            profileMenu.classList.toggle('hidden');
+        };
+        document.body.onclick = () => profileMenu.classList.add('hidden');
+        profileMenu.onclick = (e) => e.stopPropagation();
+
+        // Set profile icon to user's initials
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const snap = await db.ref('users/' + user.uid).once('value');
+                const username = snap.val()?.username || user.email || "U";
+                const initials = username.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+                profileIcon.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=6366f1&color=fff&rounded=true&size=40`;
             }
         });
-
-        // --- Optional: Clear chat for new start (uncomment to use) ---
-        // messagesRef.remove();
-
-        // --- Focus input on load ---
-        window.onload = () => { messageInput.focus(); };
     </script>
 </body>
 </html>
